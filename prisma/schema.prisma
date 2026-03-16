@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  objective   String?
+  status      String   @default("active")
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  threads     Thread[]
+
+  @@index([status])
+  @@index([name])
+}
+
+model ThreadPlatform {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+}
+
+model Contact {
+  id           String           @id @default(cuid())
+  name         String
+  organization String?
+  role         String?
+  location     String?
+  website      String?
+  notes        String?
+  metadata     Json?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  channels     ContactChannel[]
+  threads      Thread[]
+
+  @@index([name])
+  @@index([organization])
+}
+
+model ContactChannel {
+  id        String   @id @default(cuid())
+  platform  String
+  value     String
+  label     String?
+  url       String?
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  contactId String
+  contact   Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@unique([contactId, platform, value])
+  @@index([platform])
+}
+
+model Status {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  bucket    String   @default("open")
+  color     String   @default("#dde7fb")
+  position  Int      @default(0)
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  threads   Thread[]
+
+  @@index([bucket])
+  @@index([position])
+}
+
+model Tag {
+  id        String      @id @default(cuid())
+  name      String      @unique
+  color     String?
+  createdAt DateTime    @default(now())
+  threadTags ThreadTag[]
+}
+
+model Thread {
+  id               String      @id @default(cuid())
+  title            String
+  summary          String?
+  platform         String
+  platformIdentity String?
+  priority         Int         @default(3)
+  nextFollowUpAt   DateTime?
+  lastActivityAt   DateTime?
+  closedAt         DateTime?
+  metadata         Json?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  campaignId       String?
+  contactId        String
+  statusId         String
+  activities       Activity[]
+  campaign         Campaign?   @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  contact          Contact     @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  status           Status      @relation(fields: [statusId], references: [id], onDelete: Restrict)
+  tags             ThreadTag[]
+
+  @@index([campaignId])
+  @@index([contactId])
+  @@index([createdAt])
+  @@index([nextFollowUpAt])
+  @@index([platform])
+  @@index([statusId])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  type      String
+  direction String?
+  content   String
+  happenedAt DateTime @default(now())
+  metadata  Json?
+  createdAt DateTime @default(now())
+  threadId  String
+  thread    Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([happenedAt])
+  @@index([threadId, happenedAt(sort: Desc)])
+  @@index([type])
+}
+
+model ThreadTag {
+  threadId String
+  tagId    String
+  thread   Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([threadId, tagId])
+  @@index([tagId])
+}
