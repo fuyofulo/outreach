@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
 
+import { CustomSelect } from "@/components/custom-select";
 import { EmptyState, Field, PageHeader, Panel } from "@/components/ui";
 import { Filters, getThreadsPageData } from "@/lib/outreach-data";
 
@@ -46,24 +47,32 @@ export default async function ThreadsPage({ searchParams }: ThreadsPageProps) {
             />
           </Field>
           <Field label="Platform">
-            <select className="field" name="platform" defaultValue={filters.platform ?? ""}>
-              <option value="">All</option>
-              {platforms.map((platform) => (
-                <option key={platform.id} value={platform.name}>
-                  {platform.name}
-                </option>
-              ))}
-            </select>
+            <CustomSelect
+              name="platform"
+              defaultValue={filters.platform ?? ""}
+              options={[
+                { value: "", label: "All" },
+                ...platforms.map((platform) => ({
+                  value: platform.name,
+                  label: platform.name,
+                })),
+              ]}
+              placeholder="All"
+            />
           </Field>
           <Field label="Status">
-            <select className="field" name="statusId" defaultValue={filters.statusId ?? ""}>
-              <option value="">All</option>
-              {statuses.map((status) => (
-                <option key={status.id} value={status.id}>
-                  {status.name}
-                </option>
-              ))}
-            </select>
+            <CustomSelect
+              name="statusId"
+              defaultValue={filters.statusId ?? ""}
+              options={[
+                { value: "", label: "All" },
+                ...statuses.map((status) => ({
+                  value: status.id,
+                  label: status.name,
+                })),
+              ]}
+              placeholder="All"
+            />
           </Field>
           <button className="button-primary mt-[22px] !w-auto" type="submit">
             Search

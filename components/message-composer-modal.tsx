@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CustomSelect } from "@/components/custom-select";
 
 type MessageComposerModalProps = {
   contactName: string;
@@ -41,10 +42,14 @@ export function MessageComposerModal({
                 <div className="grid gap-3 md:grid-cols-[0.9fr_1fr]">
                   <label className="block">
                     <span className="label">Speaker</span>
-                    <select className="field" name="direction" defaultValue="outbound">
-                      <option value="outbound">Me</option>
-                      <option value="inbound">{contactName}</option>
-                    </select>
+                    <CustomSelect
+                      name="direction"
+                      defaultValue="outbound"
+                      options={[
+                        { value: "outbound", label: "Me" },
+                        { value: "inbound", label: contactName },
+                      ]}
+                    />
                   </label>
                   <label className="block">
                     <span className="label">When</span>

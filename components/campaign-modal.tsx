@@ -4,6 +4,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 
 import { deleteCampaignAction, saveCampaignAction } from "@/app/actions";
+import { CustomSelect } from "@/components/custom-select";
 
 type CampaignModalProps = {
   campaign?: {
@@ -80,15 +81,15 @@ export function CampaignModal({
                   </label>
                   <label className="block">
                     <span className="label">Status</span>
-                    <select
-                      className="field"
+                    <CustomSelect
                       name="status"
                       defaultValue={campaign?.status ?? "active"}
-                    >
-                      <option value="active">active</option>
-                      <option value="paused">paused</option>
-                      <option value="done">done</option>
-                    </select>
+                      options={[
+                        { value: "active", label: "active" },
+                        { value: "paused", label: "paused" },
+                        { value: "done", label: "done" },
+                      ]}
+                    />
                   </label>
                 </div>
                 <label className="block">

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { CustomSelect } from "@/components/custom-select";
 import { Field } from "@/components/ui";
 
 type CampaignOption = {
@@ -35,12 +36,10 @@ export function ThreadNameCampaignFields({
       </Field>
 
       <Field label="Campaign">
-        <select
-          className="field"
+        <CustomSelect
           name="campaignId"
           value={campaignId}
-          onChange={(event) => {
-            const nextCampaignId = event.target.value;
+          onValueChange={(nextCampaignId) => {
             const nextCampaign = campaigns.find((campaign) => campaign.id === nextCampaignId);
             const previousCampaign = campaigns.find((campaign) => campaign.id === campaignId);
 
@@ -50,14 +49,15 @@ export function ThreadNameCampaignFields({
 
             setCampaignId(nextCampaignId);
           }}
-        >
-          <option value="">None</option>
-          {campaigns.map((campaign) => (
-            <option key={campaign.id} value={campaign.id}>
-              {campaign.name}
-            </option>
-          ))}
-        </select>
+          options={[
+            { value: "", label: "None" },
+            ...campaigns.map((campaign) => ({
+              value: campaign.id,
+              label: campaign.name,
+            })),
+          ]}
+          placeholder="None"
+        />
       </Field>
     </>
   );

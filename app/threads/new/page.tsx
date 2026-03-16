@@ -2,6 +2,7 @@ import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
 
 import { createThreadAction } from "@/app/actions";
+import { CustomSelect } from "@/components/custom-select";
 import { ThreadNameCampaignFields } from "@/components/thread-name-campaign-fields";
 import { Field, PageHeader, Panel } from "@/components/ui";
 import { getThreadFormData } from "@/lib/outreach-data";
@@ -49,37 +50,32 @@ export default async function NewThreadPage({ searchParams }: NewThreadPageProps
 
           <div className="grid gap-3 lg:grid-cols-[1.3fr_0.8fr]">
             <Field label="Contact">
-              <select
-                className="field"
+              <CustomSelect
                 name="existingContactId"
                 defaultValue={selectedContact?.id ?? ""}
-                required
-              >
-                <option value="">Select a contact</option>
-                {contacts.map((contact) => (
-                  <option key={contact.id} value={contact.id}>
-                    {contact.name}
-                    {contact.organization ? ` · ${contact.organization}` : ""}
-                  </option>
-                ))}
-              </select>
+                options={[
+                  { value: "", label: "Select a contact" },
+                  ...contacts.map((contact) => ({
+                    value: contact.id,
+                    label: `${contact.name}${contact.organization ? ` · ${contact.organization}` : ""}`,
+                  })),
+                ]}
+                placeholder="Select a contact"
+              />
             </Field>
             <Field label="Platform">
-              <select
-                className="field"
+              <CustomSelect
                 name="platform"
                 defaultValue={platforms[0]?.name ?? "email"}
-              >
-                {platforms.length ? (
-                  platforms.map((platform) => (
-                    <option key={platform.id} value={platform.name}>
-                      {platform.name}
-                    </option>
-                  ))
-                ) : (
-                  <option value="email">email</option>
-                )}
-              </select>
+                options={
+                  platforms.length
+                    ? platforms.map((platform) => ({
+                        value: platform.name,
+                        label: platform.name,
+                      }))
+                    : [{ value: "email", label: "email" }]
+                }
+              />
             </Field>
           </div>
 

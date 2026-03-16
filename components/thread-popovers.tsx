@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CustomSelect } from "@/components/custom-select";
 
 type ThreadPopoversProps = {
   contactName: string;
@@ -78,37 +79,45 @@ export function ThreadPopovers({
                   <div className="grid gap-3 sm:grid-cols-2">
                     <label className="block">
                       <span className="label">Platform</span>
-                      <select className="field" name="platform" defaultValue={threadDefaults.platform}>
-                        {platforms.some((platform) => platform.name === threadDefaults.platform) ? null : (
-                          <option value={threadDefaults.platform}>{threadDefaults.platform}</option>
-                        )}
-                        {platforms.map((platform) => (
-                          <option key={platform.id} value={platform.name}>
-                            {platform.name}
-                          </option>
-                        ))}
-                      </select>
+                      <CustomSelect
+                        name="platform"
+                        defaultValue={threadDefaults.platform}
+                        options={[
+                          ...(platforms.some((platform) => platform.name === threadDefaults.platform)
+                            ? []
+                            : [{ id: "current", name: threadDefaults.platform }]),
+                          ...platforms,
+                        ].map((platform) => ({
+                          value: platform.name,
+                          label: platform.name,
+                        }))}
+                      />
                     </label>
                     <label className="block">
                       <span className="label">Status</span>
-                      <select className="field" name="statusId" defaultValue={threadDefaults.statusId}>
-                        {statuses.map((status) => (
-                          <option key={status.id} value={status.id}>
-                            {status.name}
-                          </option>
-                        ))}
-                      </select>
+                      <CustomSelect
+                        name="statusId"
+                        defaultValue={threadDefaults.statusId}
+                        options={statuses.map((status) => ({
+                          value: status.id,
+                          label: status.name,
+                        }))}
+                      />
                     </label>
                     <label className="block">
                       <span className="label">Campaign</span>
-                      <select className="field" name="campaignId" defaultValue={threadDefaults.campaignId}>
-                        <option value="">None</option>
-                        {campaigns.map((campaign) => (
-                          <option key={campaign.id} value={campaign.id}>
-                            {campaign.name}
-                          </option>
-                        ))}
-                      </select>
+                      <CustomSelect
+                        name="campaignId"
+                        defaultValue={threadDefaults.campaignId}
+                        options={[
+                          { value: "", label: "None" },
+                          ...campaigns.map((campaign) => ({
+                            value: campaign.id,
+                            label: campaign.name,
+                          })),
+                        ]}
+                        placeholder="None"
+                      />
                     </label>
                     <label className="block">
                       <span className="label">Next follow-up</span>
